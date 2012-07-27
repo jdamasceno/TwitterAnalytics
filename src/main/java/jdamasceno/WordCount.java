@@ -17,17 +17,22 @@
 
 package jdamasceno;
 
-import java.io.*;
-import java.util.*;
+import java.io.IOException;
+import java.util.StringTokenizer;
 
-import org.apache.commons.logging.*;
-import org.apache.hadoop.conf.*;
-import org.apache.hadoop.io.*;
-import org.apache.hadoop.mapreduce.*;
-import org.bson.*;
+import org.apache.commons.logging.Log;
+import org.apache.commons.logging.LogFactory;
+import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.Text;
+import org.apache.hadoop.mapreduce.Job;
+import org.apache.hadoop.mapreduce.Mapper;
+import org.apache.hadoop.mapreduce.Reducer;
+import org.bson.BSONObject;
 
-import com.mongodb.hadoop.*;
-import com.mongodb.hadoop.util.*;
+import com.mongodb.hadoop.MongoInputFormat;
+import com.mongodb.hadoop.MongoOutputFormat;
+import com.mongodb.hadoop.util.MongoConfigUtil;
 
 public class WordCount {
 
@@ -72,6 +77,8 @@ public class WordCount {
         final Configuration conf = new Configuration();
         MongoConfigUtil.setInputURI( conf, "mongodb://localhost/tweets.tweets" );
         MongoConfigUtil.setOutputURI( conf, "mongodb://localhost/tweets.count" );
+        MongoConfigUtil.setSplitSize(conf, 4);
+        
         System.out.println( "Conf: " + conf );
 
         final Job job = new Job( conf, "word count" );
