@@ -36,8 +36,6 @@ import com.mongodb.hadoop.util.MongoConfigUtil;
 
 public class WordCount {
 
-    private static final Log log = LogFactory.getLog( WordCount.class );
-
     public static class TokenizerMapper extends Mapper<Object, BSONObject, Text, IntWritable> {
 
         private final static IntWritable one = new IntWritable( 1 );
@@ -45,8 +43,8 @@ public class WordCount {
 
         public void map( Object key, BSONObject value, Context context ) throws IOException, InterruptedException{
 
-            System.out.println( "key: " + key );
-            System.out.println( "value: " + value );
+//            System.out.println( "key: " + key );
+//            System.out.println( "value: " + value );
 
             final StringTokenizer itr = new StringTokenizer( value.get( "message" ).toString() );
             while ( itr.hasMoreTokens() ){
