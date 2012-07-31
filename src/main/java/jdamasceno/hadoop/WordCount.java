@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-package jdamasceno;
+package jdamasceno.hadoop;
 
 import java.io.IOException;
 import java.util.StringTokenizer;
