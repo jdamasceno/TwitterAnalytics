@@ -1,2 +1,7 @@
 target/
+<<<<<<< HEAD
+=======
+tmp/
+>>>>>>> target
+>>>>>>> tmp
 tmp/
