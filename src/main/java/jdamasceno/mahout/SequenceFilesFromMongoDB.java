@@ -42,6 +42,7 @@ public class SequenceFilesFromMongoDB extends AbstractJob {
 						.limit(PAGE_SIZE).toArray();
 		}
 		
+		writer.close();
 		mongo.close();
 		
 		return 0;
