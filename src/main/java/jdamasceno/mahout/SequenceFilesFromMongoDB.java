@@ -18,36 +18,39 @@ public class SequenceFilesFromMongoDB extends AbstractJob {
 
 	public int run(String[] args) throws Exception {
 
-	    int chunkSize = 64;
+		int chunkSize = 64;
 
 		Mongo mongo = new Mongo();
-		DB tweetsDB = mongo.getDB("tweets"); 
+		DB tweetsDB = mongo.getDB("tweets");
 		DBCollection tweetsCollection = tweetsDB.getCollection("tweets");
-		
-		List<DBObject> tweets = tweetsCollection.find().limit(PAGE_SIZE).toArray();
-		
+
+		List<DBObject> tweets = tweetsCollection.find().limit(PAGE_SIZE)
+				.toArray();
+
 		int page = 0;
-		
-	    ChunkedWriter writer = new ChunkedWriter(
-	            getConf(), chunkSize, new Path("tmp/"));
-		
+
+		String dirUsuario = System.getProperty("user.home")
+				+ "/dados/tweeter-analytics/sequence-files-mongodb";
+		ChunkedWriter writer = new ChunkedWriter(getConf(), chunkSize,
+				new Path(dirUsuario));
+
 		while (!tweets.isEmpty()) {
-			
+
 			for (DBObject object : tweets) {
-				writer.write(object.get("_id").toString(), object.get("message").toString());
+				writer.write(object.get("_id").toString(), object
+						.get("message").toString());
 			}
-			
-			tweets = tweetsCollection.find()
-						.skip(PAGE_SIZE * ++page)
-						.limit(PAGE_SIZE).toArray();
+
+			tweets = tweetsCollection.find().skip(PAGE_SIZE * ++page)
+					.limit(PAGE_SIZE).toArray();
 		}
-		
+
 		writer.close();
 		mongo.close();
 		System.out.println("SequenceFile generated");
 		return 0;
 	}
-	
+
 	public static void main(String[] args) throws Exception {
 		ToolRunner.run(new SequenceFilesFromMongoDB(), args);
 	}

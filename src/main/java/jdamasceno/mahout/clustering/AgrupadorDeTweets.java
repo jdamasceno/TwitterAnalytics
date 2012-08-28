@@ -26,7 +26,7 @@ public class AgrupadorDeTweets {
 		int chunkSize = 200;
 		int norm = 2;
 		boolean sequentialAccessOutput = true;
-		String inputDir = "tmp";
+		String inputDir = "sequence-files";
 		Configuration conf = new Configuration();
 		FileSystem fs = FileSystem.get(conf);
 		String outputDir = "clusters";
@@ -40,6 +40,7 @@ public class AgrupadorDeTweets {
 				new Path(outputDir), "dicionario", conf, minSupport,
 				maxNGramSize, minLLRValue, 2, true, reduceTasks, chunkSize,
 				sequentialAccessOutput, false);
+		//
 		Pair<Long[], List<Path>> pair = TFIDFConverter.calculateDF(new Path(
 				inputDir), new Path(outputDir), conf, 5);
 		TFIDFConverter.processTfIdf(new Path(outputDir,
