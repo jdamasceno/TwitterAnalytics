@@ -44,7 +44,7 @@ public class SequenceFilesFromMongoDB extends AbstractJob {
 		
 		writer.close();
 		mongo.close();
-		
+		System.out.println("SequenceFile generated");
 		return 0;
 	}
 	
