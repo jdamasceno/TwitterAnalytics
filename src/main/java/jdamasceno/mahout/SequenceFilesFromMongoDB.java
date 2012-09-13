@@ -2,10 +2,15 @@ package jdamasceno.mahout;
 
 import java.util.List;
 
+import jdamasceno.stemmer.Stemmer;
+
 import org.apache.hadoop.fs.Path;
 import org.apache.hadoop.util.ToolRunner;
 import org.apache.mahout.common.AbstractJob;
 import org.apache.mahout.text.ChunkedWriter;
+
+import ptstemmer.exceptions.PTStemmerException;
+import ptstemmer.support.PTStemmerUtilities;
 
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -33,12 +38,17 @@ public class SequenceFilesFromMongoDB extends AbstractJob {
 				+ "/dados/tweeter-analytics/sequence-files-mongodb";
 		ChunkedWriter writer = new ChunkedWriter(getConf(), chunkSize,
 				new Path(dirUsuario));
+		Stemmer stemmer = createStemmer();
 
 		while (!tweets.isEmpty()) {
 
 			for (DBObject object : tweets) {
-				writer.write(object.get("_id").toString(), object
-						.get("message").toString());
+				String tweet = object
+						.get("message").toString();
+
+				String stemmedTweet = stem(tweet, stemmer);
+
+				writer.write(object.get("_id").toString(), stemmedTweet);
 			}
 
 			tweets = tweetsCollection.find().skip(PAGE_SIZE * ++page)
@@ -47,8 +57,31 @@ public class SequenceFilesFromMongoDB extends AbstractJob {
 
 		writer.close();
 		mongo.close();
-		System.out.println("SequenceFile generated");
+		System.out.println("SequenceFile generated ");
 		return 0;
+	}
+
+	private Stemmer createStemmer() throws PTStemmerException {
+		Stemmer stemmer = new Stemmer();
+		stemmer.enableCaching(100000);
+		stemmer.setStopWords(PTStemmerUtilities.fileToSet("stemmer/stopwords.txt"));
+		stemmer.ignore(PTStemmerUtilities.fileToSet("stemmer/namedEntities.txt"));
+		return stemmer;
+	}
+
+	private String stem(String tweet, Stemmer stemmer) throws PTStemmerException {
+		
+		String[] stems = stemmer.getPhraseStems(tweet);
+		StringBuilder sb = new StringBuilder();
+		
+		for (String stem : stems) {
+			String wordStemmed = PTStemmerUtilities.removeDiacritics(stem);
+			sb.append(wordStemmed).append(" ");
+		}
+		
+		System.out.println(sb.toString());
+		
+		return sb.toString();
 	}
 
 	public static void main(String[] args) throws Exception {
