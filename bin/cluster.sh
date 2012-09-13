@@ -1,5 +1,5 @@
 set -x verbose
-$MAHOUT_HOME/bin/mahout seq2sparse -i ~/dados/tweeter-analytics/sequence-files-mongodb/ -o ~/dados/tweeter-analytics/sparse-vector -wt tfidf -chunk 64 --minSupport 2 --minDF 1 --maxDFPercent 99
+$MAHOUT_HOME/bin/mahout seq2sparse -i ~/dados/tweeter-analytics/sequence-files-mongodb/ -o ~/dados/tweeter-analytics/sparse-vector -wt tfidf -chunk 64 --minSupport 2 --minDF 1 --maxDFPercent 99 -nv
 rm -rf ~/dados/tweeter-analytics/kmeans-cluster/
 mkdir ~/dados/tweeter-analytics/kmeans-cluster/
 $MAHOUT_HOME/bin/mahout  kmeans --input ~/dados/tweeter-analytics/sparse-vector/tfidf-vectors --output ~/dados/tweeter-analytics/kmeans-cluster -k 5 --maxIter 20 --distanceMeasure org.apache.mahout.common.distance.CosineDistanceMeasure --clustering --method mapreduce --clusters ~/dados/tweeter-analytics/kmeans-cluster/clusters
