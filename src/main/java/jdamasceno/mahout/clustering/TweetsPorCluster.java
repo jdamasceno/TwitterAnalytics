@@ -1,4 +1,4 @@
-package jdamasceno.hadoop;
+package jdamasceno.mahout.clustering;
 
 import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.fs.FileSystem;
@@ -15,7 +15,7 @@ import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
 
-public class Snippet {
+public class TweetsPorCluster {
 	
 	public static void main(String[] args) throws Exception {
 		Configuration conf = new Configuration();
@@ -27,7 +27,6 @@ public class Snippet {
 		DB tweetsDB = mongo.getDB("tweets");
 		DBCollection tweetsCollection = tweetsDB.getCollection("tweets");
 		
-		
 		IntWritable key = new IntWritable();
 		WeightedVectorWritable value = new WeightedVectorWritable();
 		while(reader.next(key,value)) {
@@ -37,7 +36,7 @@ public class Snippet {
 		  DBObject searchById = new BasicDBObject("_id", new ObjectId(tweetId));
 		  DBObject found = tweetsCollection.findOne(searchById);
 		  
-		  System.out.println(found.get("message") +" ----> " + clusterId );
+		  System.out.println(clusterId + " ----> " + found.get("message"));
 		}
 		
 		mongo.close();
